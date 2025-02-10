@@ -52,19 +52,16 @@ import com.qualcomm.robotcore.util.Range;
  */
 
 @TeleOp(name="Autonomo", group="Iterative OpMode")
-@Disabled
 public class Autonomo extends OpMode
 {
-    Mecanum mecanum = new Mecanum(this);
-    DeadReckoning commandDeadReckoning = new DeadReckoning(mecanum, 40.0);
-    BangBang commandBangBang = new BangBang(mecanum, 40.0);
+    Mecanum mecanum;
 
     /*
      * Code to run ONCE when the driver hits INIT
      */
     @Override
     public void init() {
-
+        mecanum = new Mecanum(this);
     }
 
     /*
@@ -87,7 +84,7 @@ public class Autonomo extends OpMode
      */
     @Override
     public void loop() {
-        Actions.runBlocking(commandDeadReckoning);
+        Actions.runBlocking(new DeadReckoning(mecanum, 40.0));
     }
 
     /*
