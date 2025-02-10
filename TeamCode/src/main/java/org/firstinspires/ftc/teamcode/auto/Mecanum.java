@@ -5,12 +5,16 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 public class Mecanum {
-    public final double maxVelocity = 12; // in/s
+    public static final double MAX_VELOCITY = 12; // in/s
+    private static final double CPR = 1680;
+    private static final double WHEEL_DIAMETER = 4;
 
     private final DcMotorEx motorEsquerdaFrente;
     private final DcMotorEx motorDireitaFrente;
     private final DcMotorEx motorEsquerdaTras;
     private final DcMotorEx motorDireitaTras;
+
+    private double factorConversionEncoder = 1;
 
     public Mecanum(OpMode opMode) {
         motorEsquerdaFrente = opMode.hardwareMap.get(DcMotorEx.class, Constants.DriveTrainMotorsNames.motorEsquerdaFrente);
@@ -18,16 +22,22 @@ public class Mecanum {
         motorEsquerdaTras = opMode.hardwareMap.get(DcMotorEx.class, Constants.DriveTrainMotorsNames.motorEsquerdaTras);
         motorDireitaTras = opMode.hardwareMap.get(DcMotorEx.class, Constants.DriveTrainMotorsNames.motorDireitaTras);
 
+        setConversionFactorEncoders((Math.PI * WHEEL_DIAMETER) / CPR);
         setDrivetrainMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
     public void setDrivetrainMode(DcMotor.RunMode modo)
     {
-        DcMotor[] motores = {motorEsquerdaFrente, motorDireitaFrente, motorDireitaTras, motorEsquerdaTras};
-        for(DcMotor motor : motores)
+        DcMotorEx[] motores = {motorEsquerdaFrente, motorDireitaFrente, motorDireitaTras, motorEsquerdaTras};
+        for(DcMotorEx motor : motores)
         {
             motor.setMode(modo);
         }
+    }
+
+    public void setConversionFactorEncoders(double factor)
+    {
+        factorConversionEncoder = factor;
     }
 
     public void drive(double gamepadLY, double gamepadLX, double gamepadRX)
@@ -42,5 +52,29 @@ public class Mecanum {
         double backLeftPower = (gamepadLY - gamepadLX + gamepadRX) / denominator;
         double frontRightPower = (gamepadLY - gamepadLX - gamepadRX) / denominator;
         double backRightPower = (gamepadLY + gamepadLX - gamepadRX) / denominator;
+
+        motorEsquerdaFrente.setPower(frontLeftPower);
+        motorDireitaFrente.setPower(frontRightPower);
+        motorEsquerdaTras.setPower(backLeftPower);
+        motorDireitaTras.setPower(backRightPower);
+    }
+
+    public double getLinearDistance()
+    {
+        return ((motorEsquerdaFrente.getCurrentPosition() + motorDireitaFrente.getCurrentPosition()) * factorConversionEncoder) / 2;
+    }
+
+    public void setLinearTarget(double target)
+    {
+        DcMotorEx[] motores = {motorEsquerdaFrente, motorDireitaFrente, motorDireitaTras, motorEsquerdaTras};
+        for(DcMotorEx motor : motores)
+        {
+            motor.setTargetPosition(motor.getCurrentPosition() + (int)(target / factorConversionEncoder));
+        }
+    }
+
+    public boolean atTarget()
+    {
+        return motorDireitaFrente.isBusy();
     }
 }

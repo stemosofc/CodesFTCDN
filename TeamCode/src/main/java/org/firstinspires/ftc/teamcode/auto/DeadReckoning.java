@@ -1,8 +1,12 @@
 package org.firstinspires.ftc.teamcode.auto;
 
+import androidx.annotation.NonNull;
+
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+import com.acmerobotics.roadrunner.Action;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-public class DeadReckoning {
+public class DeadReckoning implements Action {
     private final double maxTime;
     private final double distance;
     private final ElapsedTime timer = new ElapsedTime();
@@ -13,14 +17,24 @@ public class DeadReckoning {
     {
         this.drivetrain = drivetrain;
         this.distance = distance;
-        maxTime = distance / drivetrain.maxVelocity;
+        maxTime = distance / Mecanum.MAX_VELOCITY;
     }
 
-    public void run()
-    {
+
+    @Override
+    public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+        if(!initialized)
+        {
+            timer.reset();
+            initialized = true;
+        }
         if(timer.seconds() <= maxTime)
         {
             drivetrain.drive(1, 0, 0);
-        } else drivetrain.drive(0, 0, 0);
+        } else {
+            drivetrain.drive(0, 0, 0);
+            return false;
+        }
+        return true;
     }
 }
