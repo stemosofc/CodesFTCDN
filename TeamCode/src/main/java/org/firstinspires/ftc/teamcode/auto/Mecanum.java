@@ -2,7 +2,10 @@ package org.firstinspires.ftc.teamcode.auto;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorController;
+import com.qualcomm.robotcore.hardware.DcMotorControllerEx;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
 public class Mecanum {
     public static final double MAX_VELOCITY = 12; // in/s
@@ -76,5 +79,17 @@ public class Mecanum {
     public boolean atTarget()
     {
         return motorDireitaFrente.isBusy();
+    }
+
+    public void setPIDF(double p, double i, double d, double f)
+    {
+        PIDFCoefficients pidfNew = new PIDFCoefficients(p, i, d, f);
+        DcMotorEx[] motores = {motorEsquerdaFrente, motorDireitaFrente, motorDireitaTras, motorEsquerdaTras};
+        DcMotorControllerEx[] motorControllerEx = new DcMotorControllerEx[4];
+        for(int count = 0; count < motores.length; count++)
+        {
+            motorControllerEx[count] = (DcMotorControllerEx) motores[count].getController();
+            motorControllerEx[count].setPIDFCoefficients(motores[count].getPortNumber(), DcMotor.RunMode.RUN_USING_ENCODER, pidfNew);
+        }
     }
 }

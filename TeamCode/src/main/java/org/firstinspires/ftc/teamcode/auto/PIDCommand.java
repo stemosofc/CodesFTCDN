@@ -5,6 +5,7 @@ import androidx.annotation.NonNull;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
 public class PIDCommand implements Action {
 
@@ -20,6 +21,14 @@ public class PIDCommand implements Action {
         drivetrain.setDrivetrainMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
+    public PIDCommand(Mecanum drivetrain, double distance, PIDFCoefficients pidf)
+    {
+        this.drivetrain = drivetrain;
+        this.distance = distance;
+
+        drivetrain.setDrivetrainMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        drivetrain.setPIDF(pidf.p, pidf.i, pidf.d, pidf.f);
+    }
 
     @Override
     public boolean run(@NonNull TelemetryPacket telemetryPacket) {
