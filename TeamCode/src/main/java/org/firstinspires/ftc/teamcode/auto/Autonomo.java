@@ -76,7 +76,7 @@ public class Autonomo extends OpMode
      */
     @Override
     public void start() {
-
+        Actions.runBlocking(new DeadReckoning(mecanum, 40.0));
     }
 
     /*
@@ -84,7 +84,7 @@ public class Autonomo extends OpMode
      */
     @Override
     public void loop() {
-        Actions.runBlocking(new DeadReckoning(mecanum, 40.0));
+
     }
 
     /*
