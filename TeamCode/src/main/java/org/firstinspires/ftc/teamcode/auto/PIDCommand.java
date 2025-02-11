@@ -18,6 +18,7 @@ public class PIDCommand implements Action {
         this.drivetrain = drivetrain;
         this.distance = distance;
 
+        drivetrain.setDrivetrainMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         drivetrain.setDrivetrainMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
@@ -26,19 +27,25 @@ public class PIDCommand implements Action {
         this.drivetrain = drivetrain;
         this.distance = distance;
 
+        drivetrain.setDrivetrainMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         drivetrain.setDrivetrainMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        drivetrain.setPIDF(pidf.p, pidf.i, pidf.d, pidf.f);
+        drivetrain.setPIDFForPosition(pidf.p, pidf.i, pidf.d);
+        drivetrain.setPIDFForVelocity(pidf.p, pidf.i, pidf.d, pidf.i);
     }
 
     @Override
     public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+
+        telemetryPacket.put("Target", distance);
+        telemetryPacket.put("Actual Pose", drivetrain.getLinearDistanceOfOneMotor());
+
         if(!initialized)
         {
             initialized = true;
             drivetrain.setLinearTarget(distance);
             drivetrain.setDrivetrainMode(DcMotor.RunMode.RUN_TO_POSITION);
         }
-        drivetrain.drive(1, 0, 0);
-        return drivetrain.atTarget();
+        drivetrain.drive(0.7, 0, 0);
+        return true;
     }
 }

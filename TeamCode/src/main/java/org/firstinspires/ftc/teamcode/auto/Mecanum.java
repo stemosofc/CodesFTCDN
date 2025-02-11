@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.auto;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorController;
 import com.qualcomm.robotcore.hardware.DcMotorControllerEx;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
@@ -25,7 +24,7 @@ public class Mecanum {
         motorEsquerdaTras = opMode.hardwareMap.get(DcMotorEx.class, Constants.DriveTrainMotorsNames.motorEsquerdaTras);
         motorDireitaTras = opMode.hardwareMap.get(DcMotorEx.class, Constants.DriveTrainMotorsNames.motorDireitaTras);
 
-        setConversionFactorEncoders((Math.PI * WHEEL_DIAMETER) / CPR);
+        setConversionFactorEncoders(WHEEL_DIAMETER * Math.PI / CPR);
         setDrivetrainMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
@@ -67,6 +66,11 @@ public class Mecanum {
         return ((motorEsquerdaFrente.getCurrentPosition() + motorDireitaFrente.getCurrentPosition()) * factorConversionEncoder) / 2;
     }
 
+    public double getLinearDistanceOfOneMotor()
+    {
+        return motorEsquerdaFrente.getCurrentPosition() * factorConversionEncoder;
+    }
+
     public void setLinearTarget(double target)
     {
         DcMotorEx[] motores = {motorEsquerdaFrente, motorDireitaFrente, motorDireitaTras, motorEsquerdaTras};
@@ -78,10 +82,22 @@ public class Mecanum {
 
     public boolean atTarget()
     {
-        return motorDireitaFrente.isBusy();
+        return motorEsquerdaFrente.isBusy();
     }
 
-    public void setPIDF(double p, double i, double d, double f)
+    public void setPIDFForPosition(double p, double i, double d)
+    {
+        PIDFCoefficients pidfNew = new PIDFCoefficients(p, i, d, 0);
+        DcMotorEx[] motores = {motorEsquerdaFrente, motorDireitaFrente, motorDireitaTras, motorEsquerdaTras};
+        DcMotorControllerEx[] motorControllerEx = new DcMotorControllerEx[4];
+        for(int count = 0; count < motores.length; count++)
+        {
+            motorControllerEx[count] = (DcMotorControllerEx) motores[count].getController();
+            motorControllerEx[count].setPIDFCoefficients(motores[count].getPortNumber(), DcMotor.RunMode.RUN_TO_POSITION, pidfNew);
+        }
+    }
+
+    public void setPIDFForVelocity(double p, double i, double d, double f)
     {
         PIDFCoefficients pidfNew = new PIDFCoefficients(p, i, d, f);
         DcMotorEx[] motores = {motorEsquerdaFrente, motorDireitaFrente, motorDireitaTras, motorEsquerdaTras};

@@ -30,12 +30,10 @@
 package org.firstinspires.ftc.teamcode.auto;
 
 import com.acmerobotics.roadrunner.ftc.Actions;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.Range;
+import com.qualcomm.robotcore.hardware.PIDFCoefficients;
+
 
 /*
  * This file contains an example of an iterative (Non-Linear) "OpMode".
@@ -51,8 +49,8 @@ import com.qualcomm.robotcore.util.Range;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 
-@TeleOp(name="Autonomo", group="Iterative OpMode")
-public class Autonomo extends OpMode
+@TeleOp(name="AutonomoControlModes", group="Iterative OpMode")
+public class AutonomoControlModes extends OpMode
 {
     Mecanum mecanum;
 
@@ -76,7 +74,7 @@ public class Autonomo extends OpMode
      */
     @Override
     public void start() {
-        Actions.runBlocking(new DeadReckoning(mecanum, 40.0));
+        Actions.runBlocking(new BangBang(mecanum, 50));
     }
 
     /*
