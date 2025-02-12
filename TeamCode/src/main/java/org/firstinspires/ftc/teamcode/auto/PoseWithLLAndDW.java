@@ -106,8 +106,14 @@ public class PoseWithLLAndDW extends OpMode
                 ),
                 -gamepad1.right_stick_x));
 
+
+
+        mecanum.updatePoseEstimate();
+        pose2d = mecanum.localizer.getPose();
+
         heading = Math.toDegrees(pose2d.heading.toDouble());
         limelight.updateCameraWithHeading(heading);
+
         if(limelight.notNull()) {
             if (limelight.isValid()) {
                 pose3d = limelight.getRobotPoseMT2();
@@ -118,9 +124,6 @@ public class PoseWithLLAndDW extends OpMode
 
                 mecanum.localizer.setPose(pose2d);
             }
-        } else {
-            mecanum.updatePoseEstimate();
-            pose2d = mecanum.localizer.getPose();
         }
 
         packet.fieldOverlay().setStroke("#3F51B5");
