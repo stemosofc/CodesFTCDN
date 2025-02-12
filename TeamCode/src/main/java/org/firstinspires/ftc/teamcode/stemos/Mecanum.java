@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.auto;
+package org.firstinspires.ftc.teamcode.stemos;
 
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -134,3 +134,4 @@ public class Mecanum {
         return orientation.getYaw(AngleUnit.DEGREES);
     }
 }
+

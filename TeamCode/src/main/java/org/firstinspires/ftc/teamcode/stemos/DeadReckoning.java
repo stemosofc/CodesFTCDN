@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.auto;
+package org.firstinspires.ftc.teamcode.stemos;
 
 import androidx.annotation.NonNull;
 
@@ -23,6 +23,10 @@ public class DeadReckoning implements Action {
 
     @Override
     public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+
+        telemetryPacket.put("Target distance", distance);
+        telemetryPacket.put("Actual distance", drivetrain.getLinearDistanceOfOneMotor());
+
         if(!initialized)
         {
             timer.reset();
