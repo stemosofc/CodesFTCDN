@@ -29,14 +29,15 @@
 
 package org.firstinspires.ftc.teamcode.auto;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Pose2d;
-import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.acmerobotics.roadrunner.Vector2d;
-import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive;
+import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
+import org.firstinspires.ftc.teamcode.roadrunner.Drawing;
 
 
 /*
@@ -53,16 +54,21 @@ import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 
-@TeleOp(name="AutonomoControlModes", group="Iterative OpMode")
-public class AutonomoControlModes extends OpMode
+@TeleOp(name="Teleop", group="Iterative OpMode")
+public class TeleopCodes extends OpMode
 {
 
+    Mecanum mecanum;
+    LimelightSubsystem limelight;
+    Pose2d pose2d;
+    Pose3D pose3d;
     /*
      * Code to run ONCE when the driver hits INIT
      */
     @Override
     public void init() {
-
+        mecanum = new Mecanum(this);
+        limelight = new LimelightSubsystem(this);
     }
 
     /*
@@ -77,13 +83,6 @@ public class AutonomoControlModes extends OpMode
      */
     @Override
     public void start() {
-        Pose2d initialPose = new Pose2d(0, 0, Math.toRadians(90));
-        MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
-        TrajectoryActionBuilder tab1 = drive.actionBuilder(initialPose)
-                .splineTo(new Vector2d(72, 0), 90)
-                .splineTo(new Vector2d(0, 64), 90);
-
-        Actions.runBlocking(tab1.build());
 
     }
 
@@ -92,7 +91,20 @@ public class AutonomoControlModes extends OpMode
      */
     @Override
     public void loop() {
-
+        //mecanum.drive(-gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x, false);
+        limelight.updateCameraWithHeading(mecanum.getHeading());
+        if(limelight.notNull()) {
+            if (limelight.isValid()) {
+                pose3d = limelight.getRobotPoseMT2();
+                pose2d = new Pose2d(new Vector2d(toInches(pose3d.getPosition().x), toInches(pose3d.getPosition().y)), mecanum.getHeading());
+            }
+        }
+        TelemetryPacket packet = new TelemetryPacket();
+        packet.fieldOverlay().setStroke("#3F51B5");
+        Drawing.drawRobot(packet.fieldOverlay(), pose2d);
+        packet.put("X position", toInches(pose3d.getPosition().x));
+        packet.put("Y position", toInches(pose3d.getPosition().y));
+        FtcDashboard.getInstance().sendTelemetryPacket(packet);
     }
 
     /*
@@ -101,6 +113,11 @@ public class AutonomoControlModes extends OpMode
     @Override
     public void stop() {
 
+    }
+
+    private double toInches(double meters)
+    {
+        return meters / 0.0254;
     }
 
 }
