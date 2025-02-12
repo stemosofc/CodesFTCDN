@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.stemos;
+package org.firstinspires.ftc.teamcode.stemos.subsystem;
 
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -11,6 +11,7 @@ import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
+import org.firstinspires.ftc.teamcode.stemos.Constants;
 
 public class Mecanum {
     public static final double MAX_VELOCITY = 12; // in/s
@@ -26,15 +27,15 @@ public class Mecanum {
     private double factorConversionEncoder = 1;
 
     public Mecanum(OpMode opMode) {
-        motorEsquerdaFrente = opMode.hardwareMap.get(DcMotorEx.class, Constants.DriveTrainMotorsNames.motorEsquerdaFrente);
-        motorDireitaFrente = opMode.hardwareMap.get(DcMotorEx.class, Constants.DriveTrainMotorsNames.motorDireitaFrente);
-        motorEsquerdaTras = opMode.hardwareMap.get(DcMotorEx.class, Constants.DriveTrainMotorsNames.motorEsquerdaTras);
-        motorDireitaTras = opMode.hardwareMap.get(DcMotorEx.class, Constants.DriveTrainMotorsNames.motorDireitaTras);
+        motorEsquerdaFrente = opMode.hardwareMap.get(DcMotorEx.class, Constants.DriveTrainMotorsNames.MOTOR_ESQUERDA_FRENTE);
+        motorDireitaFrente = opMode.hardwareMap.get(DcMotorEx.class, Constants.DriveTrainMotorsNames.MOTOR_DIREITA_FRENTE);
+        motorEsquerdaTras = opMode.hardwareMap.get(DcMotorEx.class, Constants.DriveTrainMotorsNames.MOTOR_ESQUERDA_TRAS);
+        motorDireitaTras = opMode.hardwareMap.get(DcMotorEx.class, Constants.DriveTrainMotorsNames.MOTOR_DIREITA_TRAS);
 
         motorEsquerdaFrente.setDirection(DcMotorSimple.Direction.REVERSE);
         motorEsquerdaTras.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        imu = opMode.hardwareMap.get(IMU.class, "imu");
+        imu = opMode.hardwareMap.get(IMU.class, Constants.IMUNames.IMU_NAME);
 
         setConversionFactorEncoders(WHEEL_DIAMETER * Math.PI / CPR);
         setDrivetrainMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
