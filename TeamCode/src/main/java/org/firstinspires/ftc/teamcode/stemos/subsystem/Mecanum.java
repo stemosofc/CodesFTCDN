@@ -50,8 +50,8 @@ public class Mecanum {
 
     public void setDrivetrainMode(DcMotor.RunMode modo)
     {
-        DcMotorEx[] motores = {motorEsquerdaFrente, motorDireitaFrente, motorDireitaTras, motorEsquerdaTras};
-        for(DcMotorEx motor : motores)
+        DcMotorEx[] motors = {motorEsquerdaFrente, motorDireitaFrente, motorDireitaTras, motorEsquerdaTras};
+        for(DcMotorEx motor : motors)
         {
             motor.setMode(modo);
         }
@@ -93,8 +93,8 @@ public class Mecanum {
 
     public void setLinearTarget(double target)
     {
-        DcMotorEx[] motores = {motorEsquerdaFrente, motorDireitaFrente, motorDireitaTras, motorEsquerdaTras};
-        for(DcMotorEx motor : motores)
+        DcMotorEx[] motors = {motorEsquerdaFrente, motorDireitaFrente, motorDireitaTras, motorEsquerdaTras};
+        for(DcMotorEx motor : motors)
         {
             motor.setTargetPosition(motor.getCurrentPosition() + (int)(target / factorConversionEncoder));
         }
@@ -108,24 +108,24 @@ public class Mecanum {
     public void setPIDFForPosition(double p, double i, double d)
     {
         PIDFCoefficients pidfNew = new PIDFCoefficients(p, i, d, 0);
-        DcMotorEx[] motores = {motorEsquerdaFrente, motorDireitaFrente, motorDireitaTras, motorEsquerdaTras};
+        DcMotorEx[] motors = {motorEsquerdaFrente, motorDireitaFrente, motorDireitaTras, motorEsquerdaTras};
         DcMotorControllerEx[] motorControllerEx = new DcMotorControllerEx[4];
-        for(int count = 0; count < motores.length; count++)
+        for(int count = 0; count < motors.length; count++)
         {
-            motorControllerEx[count] = (DcMotorControllerEx) motores[count].getController();
-            motorControllerEx[count].setPIDFCoefficients(motores[count].getPortNumber(), DcMotor.RunMode.RUN_TO_POSITION, pidfNew);
+            motorControllerEx[count] = (DcMotorControllerEx) motors[count].getController();
+            motorControllerEx[count].setPIDFCoefficients(motors[count].getPortNumber(), DcMotor.RunMode.RUN_TO_POSITION, pidfNew);
         }
     }
 
     public void setPIDFForVelocity(double p, double i, double d, double f)
     {
         PIDFCoefficients pidfNew = new PIDFCoefficients(p, i, d, f);
-        DcMotorEx[] motores = {motorEsquerdaFrente, motorDireitaFrente, motorDireitaTras, motorEsquerdaTras};
+        DcMotorEx[] motors = {motorEsquerdaFrente, motorDireitaFrente, motorDireitaTras, motorEsquerdaTras};
         DcMotorControllerEx[] motorControllerEx = new DcMotorControllerEx[4];
-        for(int count = 0; count < motores.length; count++)
+        for(int count = 0; count < motors.length; count++)
         {
-            motorControllerEx[count] = (DcMotorControllerEx) motores[count].getController();
-            motorControllerEx[count].setPIDFCoefficients(motores[count].getPortNumber(), DcMotor.RunMode.RUN_USING_ENCODER, pidfNew);
+            motorControllerEx[count] = (DcMotorControllerEx) motors[count].getController();
+            motorControllerEx[count].setPIDFCoefficients(motors[count].getPortNumber(), DcMotor.RunMode.RUN_USING_ENCODER, pidfNew);
         }
     }
 
