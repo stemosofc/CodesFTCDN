@@ -53,8 +53,8 @@ import org.firstinspires.ftc.teamcode.MecanumDrive;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 
-@TeleOp(name="AutonomoControlModes", group="Iterative OpMode")
-public class AutonomoControlModes extends OpMode
+@TeleOp(name="Trajectory Autonomous", group="Iterative OpMode")
+public class AutonomousTrajectory extends OpMode
 {
 
     /*
