@@ -32,12 +32,15 @@ package org.firstinspires.ftc.teamcode.auto;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
-import org.firstinspires.ftc.teamcode.roadrunner.Drawing;
+import org.firstinspires.ftc.teamcode.Drawing;
+import org.firstinspires.ftc.teamcode.MecanumDrive;
 
 
 /*
@@ -54,21 +57,23 @@ import org.firstinspires.ftc.teamcode.roadrunner.Drawing;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 
-@TeleOp(name="Teleop", group="Iterative OpMode")
-public class TeleopCodes extends OpMode
+@TeleOp(name="Pose With Limelight And DeadWheels Teleop", group="Iterative OpMode")
+public class PoseWithLLAndDW extends OpMode
 {
 
-    Mecanum mecanum;
+    MecanumDrive mecanum;
     LimelightSubsystem limelight;
     Pose2d pose2d;
     Pose3D pose3d;
+    double heading;
     /*
      * Code to run ONCE when the driver hits INIT
      */
     @Override
     public void init() {
-        mecanum = new Mecanum(this);
+        mecanum = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
         limelight = new LimelightSubsystem(this);
+        pose2d = new Pose2d(0, 0, 0);
     }
 
     /*
@@ -91,19 +96,38 @@ public class TeleopCodes extends OpMode
      */
     @Override
     public void loop() {
-        //mecanum.drive(-gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x, false);
-        limelight.updateCameraWithHeading(mecanum.getHeading());
+        TelemetryPacket packet = new TelemetryPacket();
+
+
+        mecanum.setDrivePowers(new PoseVelocity2d(
+                new Vector2d(
+                        -gamepad1.left_stick_y,
+                        -gamepad1.left_stick_x
+                ),
+                -gamepad1.right_stick_x));
+
+        heading = Math.toDegrees(pose2d.heading.toDouble());
+        limelight.updateCameraWithHeading(heading);
         if(limelight.notNull()) {
             if (limelight.isValid()) {
                 pose3d = limelight.getRobotPoseMT2();
-                pose2d = new Pose2d(new Vector2d(toInches(pose3d.getPosition().x), toInches(pose3d.getPosition().y)), mecanum.getHeading());
+                pose2d = new Pose2d(new Vector2d(toInches(pose3d.getPosition().x), toInches(pose3d.getPosition().y)), Math.toRadians(heading));
+
+                packet.put("X position Vision", toInches(pose3d.getPosition().x));
+                packet.put("Y position Vision", toInches(pose3d.getPosition().y));
+
+                mecanum.localizer.setPose(pose2d);
             }
+        } else {
+            mecanum.updatePoseEstimate();
+            pose2d = mecanum.localizer.getPose();
         }
-        TelemetryPacket packet = new TelemetryPacket();
+
         packet.fieldOverlay().setStroke("#3F51B5");
         Drawing.drawRobot(packet.fieldOverlay(), pose2d);
-        packet.put("X position", toInches(pose3d.getPosition().x));
-        packet.put("Y position", toInches(pose3d.getPosition().y));
+        packet.put("X position DW", pose2d.position.x);
+        packet.put("Y position DW", pose2d.position.y);
+        packet.put("Heading", heading);
         FtcDashboard.getInstance().sendTelemetryPacket(packet);
     }
 
