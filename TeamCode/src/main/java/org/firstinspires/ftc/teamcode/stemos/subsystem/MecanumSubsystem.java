@@ -55,11 +55,24 @@ public class MecanumSubsystem {
 
     public void drive(double gamepadLY, double gamepadLX, double gamepadRX, boolean fieldOriented)
     {
-        double denominator = Math.max(Math.abs(gamepadLY) + Math.abs(gamepadLX) + Math.abs(gamepadRX), 1);
-        double frontLeftPower = (gamepadLY + gamepadLX + gamepadRX) / denominator;
-        double backLeftPower = (gamepadLY - gamepadLX + gamepadRX) / denominator;
-        double frontRightPower = (gamepadLY - gamepadLX - gamepadRX) / denominator;
-        double backRightPower = (gamepadLY + gamepadLX - gamepadRX) / denominator;
+        double forward = gamepadLY;
+        double strafe = gamepadLX;
+        double turn = gamepadRX;
+        double heading = Math.toRadians(getHeading());
+        if(fieldOriented)
+        {
+            double forwardUpdated = forward * Math.cos(heading) + strafe * Math.sin(heading);
+            double strafeUpdated = -forward * Math.sin(heading) + strafe * Math.cos(heading);
+
+            forward = forwardUpdated;
+            strafe = strafeUpdated;
+        }
+
+        double denominator = Math.max(Math.abs(forward) + Math.abs(strafe) + Math.abs(turn), 1);
+        double frontLeftPower = (forward + strafe + turn) / denominator;
+        double backLeftPower = (forward - strafe + turn) / denominator;
+        double frontRightPower = (forward - strafe - turn) / denominator;
+        double backRightPower = (forward + strafe - turn) / denominator;
 
         motorEsquerdaFrente.setPower(frontLeftPower);
         motorDireitaFrente.setPower(frontRightPower);
