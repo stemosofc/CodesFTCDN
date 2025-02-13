@@ -28,8 +28,8 @@ public class BangBang implements Action {
         double error = targetDistance - actualDistance;
 
         telemetryPacket.put("Error", error);
-        telemetryPacket.put("Distance", actualDistance);
-        telemetryPacket.put("Target Distance", targetDistance);
+        telemetryPacket.put("Actual Pose", actualDistance);
+        telemetryPacket.put("Target", targetDistance);
 
         if(Math.abs(error) != MARGEM) {
             if (error >= MARGEM) {

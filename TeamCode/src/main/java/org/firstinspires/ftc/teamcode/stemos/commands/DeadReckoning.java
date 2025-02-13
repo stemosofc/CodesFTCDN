@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.stemos.subsystem.ArmSubsystem;
@@ -20,14 +21,16 @@ public class DeadReckoning implements Action {
         this.arm = arm;
         this.distance = distance;
         maxTime = distance / ArmSubsystem.MAX_VELOCITY;
+
+        arm.setArmMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
 
     @Override
     public boolean run(@NonNull TelemetryPacket telemetryPacket) {
 
-        telemetryPacket.put("Target distance", distance);
-        telemetryPacket.put("Actual distance", arm.getAngleOfArm());
+        telemetryPacket.put("Target", distance);
+        telemetryPacket.put("Actual Pose", arm.getAngleOfArm());
 
         if(!initialized)
         {

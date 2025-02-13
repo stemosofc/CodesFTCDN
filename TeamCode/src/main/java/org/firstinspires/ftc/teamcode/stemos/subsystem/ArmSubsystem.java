@@ -15,7 +15,7 @@ import org.firstinspires.ftc.teamcode.stemos.Constants;
 public class ArmSubsystem {
     private static final double CPR = 1680;
     private static final double REDUCTION = 1;
-    public static final double MAX_VELOCITY = 600;
+    public static final double MAX_VELOCITY = 599.695826;
 
     private final DcMotorEx pivot;
     private double factorConversionEncoder = 1;
