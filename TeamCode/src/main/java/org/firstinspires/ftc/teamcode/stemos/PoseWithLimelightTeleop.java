@@ -39,7 +39,8 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 import org.firstinspires.ftc.teamcode.Drawing;
 import org.firstinspires.ftc.teamcode.stemos.subsystem.LimelightSubsystem;
-import org.firstinspires.ftc.teamcode.stemos.subsystem.Mecanum;
+import org.firstinspires.ftc.teamcode.stemos.subsystem.MecanumSubsystem;
+import org.firstinspires.ftc.teamcode.stemos.subsystem.MecanumSubsystem;
 
 
 /*
@@ -60,7 +61,7 @@ import org.firstinspires.ftc.teamcode.stemos.subsystem.Mecanum;
 public class PoseWithLimelightTeleop extends OpMode
 {
 
-    Mecanum mecanum;
+    MecanumSubsystem mecanum;
     LimelightSubsystem limelight;
     Pose2d pose2d;
     Pose3D pose3d;
@@ -69,7 +70,7 @@ public class PoseWithLimelightTeleop extends OpMode
      */
     @Override
     public void init() {
-        mecanum = new Mecanum(this);
+        mecanum = new MecanumSubsystem(this);
         limelight = new LimelightSubsystem(this);
         pose2d = new Pose2d(0, 0, 0);
     }

@@ -11,14 +11,14 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import org.firstinspires.ftc.teamcode.stemos.Constants;
 
-public class Mecanum {
+public class MecanumSubsystem {
     private final DcMotorEx motorEsquerdaFrente;
     private final DcMotorEx motorDireitaFrente;
     private final DcMotorEx motorEsquerdaTras;
     private final DcMotorEx motorDireitaTras;
     private final IMU imu;
 
-    public Mecanum(OpMode opMode) {
+    public MecanumSubsystem(OpMode opMode) {
         motorEsquerdaFrente = opMode.hardwareMap.get(DcMotorEx.class, Constants.DriveTrainMotorsNames.MOTOR_ESQUERDA_FRENTE);
         motorDireitaFrente = opMode.hardwareMap.get(DcMotorEx.class, Constants.DriveTrainMotorsNames.MOTOR_DIREITA_FRENTE);
         motorEsquerdaTras = opMode.hardwareMap.get(DcMotorEx.class, Constants.DriveTrainMotorsNames.MOTOR_ESQUERDA_TRAS);

@@ -16,6 +16,7 @@ public class ArmSubsystem {
     private final DcMotorEx pivot;
     private double factorConversionEncoder = 1;
 
+
     public ArmSubsystem(OpMode opMode)
     {
         pivot = opMode.hardwareMap.get(DcMotorEx.class, Constants.ArmNames.ARM);
@@ -46,6 +47,11 @@ public class ArmSubsystem {
             motorControllerEx[count] = (DcMotorControllerEx) motors[count].getController();
             motorControllerEx[count].setPIDFCoefficients(motors[count].getPortNumber(), DcMotor.RunMode.RUN_USING_ENCODER, pidfNew);
         }
+    }
+
+    public void resetArmEncoders()
+    {
+        setArmMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
 
     public double getAngleOfArm()
@@ -94,7 +100,7 @@ public class ArmSubsystem {
 
     public boolean atTarget()
     {
-        return pivot.isBusy();
+        return !pivot.isBusy();
     }
 
     public void setConversionFactorEncoders(double factor)
