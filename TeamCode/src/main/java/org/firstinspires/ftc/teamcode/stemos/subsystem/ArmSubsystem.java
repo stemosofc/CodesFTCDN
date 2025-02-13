@@ -1,5 +1,9 @@
 package org.firstinspires.ftc.teamcode.stemos.subsystem;
 
+import androidx.annotation.NonNull;
+
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+import com.acmerobotics.roadrunner.Action;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorControllerEx;
@@ -108,4 +112,22 @@ public class ArmSubsystem {
         factorConversionEncoder = factor;
     }
 
+    public Action setArmAngle(double angle) {
+        return new Action() {
+            private boolean initialized = false;
+
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+                if (!initialized) {
+                    setAngleOfArm(angle);
+                    initialized = true;
+                }
+
+                packet.put("Angle of Arm", getAngleOfArm());
+                packet.put("Command finished", !(getAngleOfArm() < angle));
+
+                return !atTarget();
+            }
+        };
+    }
 }

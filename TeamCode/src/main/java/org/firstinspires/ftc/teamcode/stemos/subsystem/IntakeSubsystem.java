@@ -1,5 +1,10 @@
 package org.firstinspires.ftc.teamcode.stemos.subsystem;
 
+import androidx.annotation.NonNull;
+
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+import com.acmerobotics.roadrunner.Action;
+import com.acmerobotics.roadrunner.InstantAction;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 
@@ -29,4 +34,11 @@ public class IntakeSubsystem {
         return servo.getPosition();
     }
 
+    public Action closeIntakeAction() {
+        return new InstantAction(this::closeIntake);
+    }
+
+    public Action openIntakeAction() {
+        return new InstantAction(this::openIntake);
+    }
 }
