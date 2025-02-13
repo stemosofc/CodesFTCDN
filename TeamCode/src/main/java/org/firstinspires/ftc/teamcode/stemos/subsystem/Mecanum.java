@@ -3,11 +3,9 @@ package org.firstinspires.ftc.teamcode.stemos.subsystem;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorControllerEx;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.IMU;
-import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
@@ -31,7 +29,6 @@ public class Mecanum {
 
         imu = opMode.hardwareMap.get(IMU.class, Constants.IMUNames.IMU_NAME);
 
-        setConversionFactorEncoders(WHEEL_DIAMETER * Math.PI / CPR);
         setDrivetrainMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         RevHubOrientationOnRobot.LogoFacingDirection logoDirection = RevHubOrientationOnRobot.LogoFacingDirection.FORWARD;
@@ -49,11 +46,6 @@ public class Mecanum {
         {
             motor.setMode(modo);
         }
-    }
-
-    public void setConversionFactorEncoders(double factor)
-    {
-        factorConversionEncoder = factor;
     }
 
     public void drive(double gamepadLY, double gamepadLX, double gamepadRX)

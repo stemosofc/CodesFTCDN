@@ -18,4 +18,14 @@ public class Constants {
     {
         public static final String LIMELIGHT_NAME = "limelight";
     }
+
+    public static class ArmNames
+    {
+        public static final String ARM = "motorEsquerdaFrente";
+    }
+
+    public static class IntakeNames
+    {
+        public static final String INTAKE = "intake";
+    }
 }

@@ -7,47 +7,41 @@ import com.acmerobotics.roadrunner.Action;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
+import org.firstinspires.ftc.teamcode.stemos.subsystem.ArmSubsystem;
 import org.firstinspires.ftc.teamcode.stemos.subsystem.Mecanum;
 
 public class PIDCommand implements Action {
 
     private final double distance;
-    private final Mecanum drivetrain;
+    private final ArmSubsystem arm;
     private boolean initialized = false;
 
-    public PIDCommand(Mecanum drivetrain, double distance)
+    public PIDCommand(ArmSubsystem arm, double distance)
     {
-        this.drivetrain = drivetrain;
+        this.arm = arm;
         this.distance = distance;
-
-        drivetrain.setDrivetrainMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        drivetrain.setDrivetrainMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
-    public PIDCommand(Mecanum drivetrain, double distance, PIDFCoefficients pidf)
+    public PIDCommand(ArmSubsystem arm, double distance, PIDFCoefficients pidf)
     {
-        this.drivetrain = drivetrain;
+        this.arm = arm;
         this.distance = distance;
 
-        drivetrain.setDrivetrainMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        drivetrain.setDrivetrainMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        drivetrain.setPIDFForPosition(pidf.p, pidf.i, pidf.d);
-        drivetrain.setPIDFForVelocity(pidf.p, pidf.i, pidf.d, pidf.i);
+        arm.setPIDFForPosition(pidf.p, pidf.i, pidf.d);
+        arm.setPIDFForVelocity(pidf.p, pidf.i, pidf.d, pidf.i);
     }
 
     @Override
     public boolean run(@NonNull TelemetryPacket telemetryPacket) {
 
         telemetryPacket.put("Target", distance);
-        telemetryPacket.put("Actual Pose", drivetrain.getLinearDistanceOfOneMotor());
+        telemetryPacket.put("Actual Pose", arm.getAngleOfArm());
 
         if(!initialized)
         {
             initialized = true;
-            drivetrain.setLinearTarget(distance);
-            drivetrain.setDrivetrainMode(DcMotor.RunMode.RUN_TO_POSITION);
+            arm.setAngleOfArm(distance);
         }
-        drivetrain.drive(0.7, 0, 0);
         return true;
     }
 }

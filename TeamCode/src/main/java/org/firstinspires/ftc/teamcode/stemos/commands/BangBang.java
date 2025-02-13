@@ -5,27 +5,26 @@ import androidx.annotation.NonNull;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
 import com.qualcomm.robotcore.hardware.DcMotor;
-
-import org.firstinspires.ftc.teamcode.stemos.subsystem.Mecanum;
+import org.firstinspires.ftc.teamcode.stemos.subsystem.ArmSubsystem;
 
 public class BangBang implements Action {
 
     private final double targetDistance;
-    private final Mecanum drivetrain;
+    private final ArmSubsystem arm;
     private static final double MARGEM = 2;
 
-    public BangBang(Mecanum drivetrain, double distance)
+    public BangBang(ArmSubsystem arm, double angle)
     {
-            this.drivetrain = drivetrain;
-            targetDistance = distance;
+        this.arm = arm;
+        targetDistance = angle;
 
-            drivetrain.setDrivetrainMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            drivetrain.setDrivetrainMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        arm.setArmMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        arm.setArmMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     @Override
     public boolean run(@NonNull TelemetryPacket telemetryPacket) {
-        double actualDistance = drivetrain.getLinearDistanceOfOneMotor();
+        double actualDistance = arm.getAngleOfArm();
         double error = targetDistance - actualDistance;
 
         telemetryPacket.put("Error", error);
@@ -34,11 +33,11 @@ public class BangBang implements Action {
 
         if(Math.abs(error) != MARGEM) {
             if (error >= MARGEM) {
-                drivetrain.drive(0.7, 0, 0);
+                arm.setSpeed(0.6);
             } else if (error <= -MARGEM) {
-                drivetrain.drive(-0.7, 0, 0);
+                arm.setSpeed(-0.6);
             } else {
-                drivetrain.drive(0, 0, 0);
+                arm.setSpeed(0.0);
             }
             return true;
         } else {
