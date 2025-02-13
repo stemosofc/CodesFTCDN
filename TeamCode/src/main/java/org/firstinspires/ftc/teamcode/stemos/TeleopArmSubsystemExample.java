@@ -29,18 +29,11 @@
 
 package org.firstinspires.ftc.teamcode.stemos;
 
-import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
-import com.acmerobotics.roadrunner.Pose2d;
-import com.acmerobotics.roadrunner.PoseVelocity2d;
-import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
-import org.firstinspires.ftc.teamcode.Drawing;
-import org.firstinspires.ftc.teamcode.MecanumDrive;
-import org.firstinspires.ftc.teamcode.stemos.subsystem.LimelightSubsystem;
+import org.firstinspires.ftc.teamcode.stemos.commands.controller.Controller;
+import org.firstinspires.ftc.teamcode.stemos.subsystem.ArmSubsystem;
 
 
 /*
@@ -57,23 +50,19 @@ import org.firstinspires.ftc.teamcode.stemos.subsystem.LimelightSubsystem;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 
-@TeleOp(name="Pose With Limelight And DeadWheels Teleop", group="Iterative OpMode")
-public class PoseWithLLAndDW extends OpMode
+@TeleOp(name="Teleop for Arm Example", group="Iterative OpMode")
+public class TeleopArmSubsystemExample extends OpMode
 {
-
-    MecanumDrive mecanum;
-    LimelightSubsystem limelight;
-    Pose2d pose2d;
-    Pose3D pose3d;
-    double heading;
+    ArmSubsystem arm;
+    boolean armToggle = false;
+    Controller controle;
     /*
      * Code to run ONCE when the driver hits INIT
      */
     @Override
     public void init() {
-        mecanum = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
-        limelight = new LimelightSubsystem(this);
-        pose2d = new Pose2d(0, 0, 0);
+        arm = new ArmSubsystem(this);
+        controle = new Controller(gamepad1);
     }
 
     /*
@@ -96,42 +85,19 @@ public class PoseWithLLAndDW extends OpMode
      */
     @Override
     public void loop() {
-        TelemetryPacket packet = new TelemetryPacket();
-
-
-        mecanum.setDrivePowers(new PoseVelocity2d(
-                new Vector2d(
-                        -gamepad1.left_stick_y,
-                        -gamepad1.left_stick_x
-                ),
-                -gamepad1.right_stick_x));
-
-
-
-        mecanum.updatePoseEstimate();
-        pose2d = mecanum.localizer.getPose();
-
-        heading = Math.toDegrees(pose2d.heading.toDouble());
-        limelight.updateCameraWithHeading(heading);
-
-        if(limelight.notNull()) {
-            if (limelight.isValid()) {
-                pose3d = limelight.getRobotPoseMT2();
-                pose2d = new Pose2d(new Vector2d(toInches(pose3d.getPosition().x), toInches(pose3d.getPosition().y)), Math.toRadians(heading));
-
-                packet.put("X position Vision", toInches(pose3d.getPosition().x));
-                packet.put("Y position Vision", toInches(pose3d.getPosition().y));
-
-                mecanum.localizer.setPose(pose2d);
+        if(controle.a.wasJustPressed())
+        {
+            armToggle = !armToggle;
+            if(armToggle) {
+                arm.setAngleOfArm(360);
+            } else {
+                arm.setAngleOfArm(0);
             }
         }
 
-        packet.fieldOverlay().setStroke("#3F51B5");
-        Drawing.drawRobot(packet.fieldOverlay(), pose2d);
-        packet.put("X position DW", pose2d.position.x);
-        packet.put("Y position DW", pose2d.position.y);
-        packet.put("Heading", heading);
-        FtcDashboard.getInstance().sendTelemetryPacket(packet);
+        controle.update();
+        telemetry.addData("Angle of Arm", "%.2f", arm.getAngleOfArm());
+        telemetry.update();
     }
 
     /*
@@ -140,11 +106,6 @@ public class PoseWithLLAndDW extends OpMode
     @Override
     public void stop() {
 
-    }
-
-    private double toInches(double meters)
-    {
-        return meters / 0.0254;
     }
 
 }

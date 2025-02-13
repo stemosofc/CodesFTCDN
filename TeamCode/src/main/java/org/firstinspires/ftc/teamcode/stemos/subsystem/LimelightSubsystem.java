@@ -30,7 +30,7 @@ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
 TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-package org.firstinspires.ftc.teamcode.stemos;
+package org.firstinspires.ftc.teamcode.stemos.subsystem;
 
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.LLStatus;
@@ -38,6 +38,7 @@ import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
+import org.firstinspires.ftc.teamcode.stemos.Constants;
 
 /*
  * This OpMode illustrates how to use the Limelight3A Vision Sensor.
@@ -70,7 +71,7 @@ public class LimelightSubsystem {
     public LimelightSubsystem(OpMode opMode)
     {
         this.opMode = opMode;
-        limelight = opMode.hardwareMap.get(Limelight3A.class, "limelight");
+        limelight = opMode.hardwareMap.get(Limelight3A.class, Constants.LimelightNames.LIMELIGHT_NAME);
 
         opMode.telemetry.setMsTransmissionInterval(11);
 
@@ -135,7 +136,6 @@ public class LimelightSubsystem {
     {
         return result.getBotpose();
     }
-
 
     public Pose3D getRobotPoseMT2()
     {

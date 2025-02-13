@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.stemos;
+package org.firstinspires.ftc.teamcode.stemos.commands;
 
 import androidx.annotation.NonNull;
 
@@ -6,18 +6,20 @@ import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.stemos.subsystem.ArmSubsystem;
+
 public class DeadReckoning implements Action {
     private final double maxTime;
     private final double distance;
     private final ElapsedTime timer = new ElapsedTime();
     private boolean initialized = false;
-    private final Mecanum drivetrain;
+    private final ArmSubsystem arm;
 
-    public DeadReckoning(Mecanum drivetrain, double distance)
+    public DeadReckoning(ArmSubsystem arm, double distance)
     {
-        this.drivetrain = drivetrain;
+        this.arm = arm;
         this.distance = distance;
-        maxTime = distance / Mecanum.MAX_VELOCITY;
+        maxTime = distance / ArmSubsystem.MAX_VELOCITY;
     }
 
 
@@ -25,7 +27,7 @@ public class DeadReckoning implements Action {
     public boolean run(@NonNull TelemetryPacket telemetryPacket) {
 
         telemetryPacket.put("Target distance", distance);
-        telemetryPacket.put("Actual distance", drivetrain.getLinearDistanceOfOneMotor());
+        telemetryPacket.put("Actual distance", arm.getAngleOfArm());
 
         if(!initialized)
         {
@@ -34,9 +36,9 @@ public class DeadReckoning implements Action {
         }
         if(timer.seconds() <= maxTime)
         {
-            drivetrain.drive(1, 0, 0);
+            arm.setSpeed(1.0);
         } else {
-            drivetrain.drive(0, 0, 0);
+            arm.setSpeed(0);
             return false;
         }
         return true;
