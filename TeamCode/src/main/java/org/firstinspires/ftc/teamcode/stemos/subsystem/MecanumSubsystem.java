@@ -61,8 +61,8 @@ public class MecanumSubsystem {
         double heading = Math.toRadians(getHeading());
         if(fieldOriented)
         {
-            double forwardUpdated = forward * Math.cos(heading) + strafe * Math.sin(heading);
-            double strafeUpdated = -forward * Math.sin(heading) + strafe * Math.cos(heading);
+            double forwardUpdated = strafe * Math.sin(-heading) + forward * Math.cos(-heading);
+            double strafeUpdated = strafe * Math.cos(-heading) - forward * Math.sin(-heading);
 
             forward = forwardUpdated;
             strafe = strafeUpdated;
@@ -84,6 +84,11 @@ public class MecanumSubsystem {
     {
         YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
         return orientation.getYaw(AngleUnit.DEGREES);
+    }
+
+    public void resetHeading()
+    {
+        imu.resetYaw();
     }
 }
 

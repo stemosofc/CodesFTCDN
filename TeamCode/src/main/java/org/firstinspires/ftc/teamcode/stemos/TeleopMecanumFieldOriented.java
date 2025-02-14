@@ -29,16 +29,9 @@
 
 package org.firstinspires.ftc.teamcode.stemos;
 
-import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
-import com.acmerobotics.roadrunner.Pose2d;
-import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
-import org.firstinspires.ftc.teamcode.Drawing;
-import org.firstinspires.ftc.teamcode.stemos.subsystem.LimelightSubsystem;
 import org.firstinspires.ftc.teamcode.stemos.subsystem.MecanumSubsystem;
 
 
@@ -56,7 +49,7 @@ import org.firstinspires.ftc.teamcode.stemos.subsystem.MecanumSubsystem;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 
-@TeleOp(name="Pose With Limelight Teleop", group="Iterative OpMode")
+@TeleOp(name="Mecanum Field Oriented", group="Iterative OpMode")
 public class TeleopMecanumFieldOriented extends OpMode
 {
 
@@ -89,9 +82,16 @@ public class TeleopMecanumFieldOriented extends OpMode
      */
     @Override
     public void loop() {
-        TelemetryPacket packet = new TelemetryPacket();
 
         mecanum.drive(-gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x, true);
+
+        if(gamepad1.y)
+        {
+            mecanum.resetHeading();
+        }
+
+        telemetry.addData("Heading", "%.2f", mecanum.getHeading());
+        telemetry.update();
     }
 
     /*
